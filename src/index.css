@@ -3,3 +3,12 @@ body {
   padding: 0;
   margin: 0;
 }
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+}
+
+.mining-glow {
+  animation: glow 2s ease-in-out infinite;
+}

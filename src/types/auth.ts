@@ -5,4 +5,10 @@ export interface AuthUser {
   expected_rank_bonus?: number;
   available_earnings?: number;
   direct_referrals?: number;
+  telegram?: {
+    photo_url?: string;
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+  };
 } 

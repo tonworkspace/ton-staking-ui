@@ -8,23 +8,158 @@
 // import { Header } from '@/components/Header/Header';
 // import { useAuth } from '@/hooks/useAuth';
 
-// // Simplified interfaces
+// // Add new interfaces for referral and mining
 // interface MiningStats {
+//   lastMiningTime: number;
 //   totalMined: number;
 //   cycleEarnings: number;
-//   checkpointsPassed: number;
-//   cycleCompletion: number;
+//   referralEarnings: number;
+//   weeklyRankingBonus: number;
+//   consecutiveDays: number;
 //   cycleStartTime: number;
+//   cycleCompletion: number;
+//   lastCheckpointTime: number;
+//   checkpointsPassed: number;
 // }
 
-// // Remove game configuration objects and keep only UI constants
+// // Realistic Mining Configuration
+// const MINING_CONFIG = {
+//   BASE_RATE: 0.0001,     // 0.01% daily base rate
+//   INTERVALS: {
+//     MINING: 1000,        // Updates every second
+//     REWARD: 1000,        // Reward calculation every second
+//     OFFLINE: 24 * 60 * 60 * 1000
+//   },
+//   USER_SHARE: 0.7,       // 70% user share
+//   BONUSES: {
+//     EQUIPMENT_BOOST: 0.05,  // 5% per equipment level
+//     CONSECUTIVE_DAYS: 0.01, // 1% per consecutive day
+//     STAKE_TIERS: [        
+//       { amount: 1, bonus: 0.05 },   // 5% bonus
+//       { amount: 5, bonus: 0.1 },  
+//       { amount: 10, bonus: 0.2 },  
+//       { amount: 50, bonus: 0.5 },  
+//     ]
+//   },
+//   LIMITS: {
+//     MIN_STAKE: 1,         // 1 TON minimum stake
+//     OFFLINE_CAP: 0.8,     // 20% offline penalty
+//     MAX_MULTIPLIER: 5     // 5x multiplier
+//   }
+// };
+
+// const REFERRAL_CONFIG = {
+//   REWARDS: {
+//     LEVEL1: 0.08, // 8% of mining rewards
+//     LEVEL2: 0.05, // 5% of mining rewards
+//     LEVEL3: 0.03  // 3% of mining rewards
+//   }
+// };
+
+// interface MiningState {
+//   power: number;           // Base mining power
+//   efficiency: number;      // Current efficiency (0-1)
+//   lastUpdate: number;      // Last calculation timestamp
+//   consecutiveDays: number; // Streak of daily logins
+//   equipment: Equipment[];  // Mining equipment owned
+//   boosters: Booster[];    // Active time-limited boosters
+// }
+
+// interface Equipment {
+//   id: number;
+//   level: number;
+//   powerBoost: number;
+//   efficiency: number;
+// }
+
+// interface Booster {
+//   type: 'power' | 'efficiency' | 'speed';
+//   multiplier: number;
+//   expiresAt: number;
+// }
+
+// // Basic Mining Configuration for New Miners
+// const BASIC_MINING_CONFIG = {
+//   BASE_RATE: 0.1,        // 10% daily base rate
+//   INTERVALS: {
+//     MINING: 1000,        // Updates every second
+//     REWARD: 1000,        // Reward calculation every second
+//     OFFLINE: 24 * 60 * 60 * 1000
+//   },
+//   USER_SHARE: 0.8,       // 80% user share
+//   BONUSES: {
+//     EQUIPMENT_BOOST: 0.1,  // 10% per equipment level
+//     CONSECUTIVE_DAYS: 0.05, // 5% per consecutive day
+//     STAKE_TIERS: [        
+//       { amount: 1, bonus: 0.1 },   // 10% bonus
+//       { amount: 5, bonus: 0.2 },  
+//       { amount: 10, bonus: 0.5 },  
+//       { amount: 50, bonus: 1.0 },  
+//     ]
+//   },
+//   LIMITS: {
+//     MIN_STAKE: 0.1,         
+//     OFFLINE_CAP: 0.5,        // 50% offline penalty
+//     MAX_MULTIPLIER: 10       // 10x multiplier
+//   }
+// };
+
+// // Update cycle configuration
+// const CYCLE_CONFIG = {
+//   DURATION: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+// };
+
+// // Update checkpoint configuration
+// const CHECKPOINT_CONFIG = {
+//   INTERVAL: 6 * 60 * 60 * 1000, // 6 hours in milliseconds
+//   MIN_DEPOSIT: 0.1, // Minimum deposit to improve mining
+//   PERFORMANCE_BOOST: 0.1, // 10% boost per deposit at checkpoint
+//   BONUS_MULTIPLIER: 1.05 // 5% bonus per checkpoint passed
+// };
+
+
+// // Add helper function to calculate cycle progress
+// const calculateCycleProgress = (startTime: number): number => {
+//   const now = Date.now();
+//   const elapsed = now - startTime;
+//   const progress = (elapsed / CYCLE_CONFIG.DURATION) * 100;
+//   return Math.min(100, progress);
+// };
+
+// // Add new localStorage functions for mining state
+// const saveMiningState = (state: {
+//   isStaking: boolean;
+//   stakedAmount: number;
+//   miningStats: MiningStats;
+// }) => {
+//   localStorage.setItem('miningState', JSON.stringify(state));
+// };
+
+// const loadMiningState = () => {
+//   const savedState = localStorage.getItem('miningState');
+//   return savedState ? JSON.parse(savedState) : null;
+// };
+
+// // Add login bonus configuration
+// const LOGIN_BONUS = {
+//   DAILY: {
+//     AMOUNT: 1.0, // 1.0 HDC daily bonus
+//     INTERVAL: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+//   },
+//   HOURLY: {
+//     AMOUNT: 0.1, // 0.1 HDC hourly bonus
+//     INTERVAL: 60 * 60 * 1000, // 1 hour in milliseconds
+//   }
+// };
+
+// // Add new mining animation styles
 // const MINING_ANIMATIONS = {
 //   PULSE: 'animate-[pulse_2s_ease-in-out_infinite]',
 //   GLOW: 'animate-[glow_1.5s_ease-in-out_infinite]',
 //   SPIN: 'animate-[spin_3s_linear_infinite]'
 // };
 
-// // Simplified MiningParticles component
+// // Add mining particle effect component
 // const MiningParticles = () => (
 //   <div className="absolute inset-0 pointer-events-none">
 //     <div className="relative w-full h-full">
@@ -43,22 +178,41 @@
 //   </div>
 // );
 
-// const LOGIN_BONUS = {
-//   DAILY: { AMOUNT: 100, INTERVAL: 24 * 60 * 60 * 1000 },
-//   HOURLY: { AMOUNT: 10, INTERVAL: 60 * 60 * 1000 }
+// // Add these helper functions at the top level
+// const loadBonusTimes = () => {
+//   const savedDailyBonus = localStorage.getItem('lastDailyBonus');
+//   const savedHourlyBonus = localStorage.getItem('lastHourlyBonus');
+//   return {
+//     daily: savedDailyBonus ? Number(savedDailyBonus) : 0,
+//     hourly: savedHourlyBonus ? Number(savedHourlyBonus) : 0
+//   };
 // };
 
-// const HOURLY_RATE = 0.1; // Defines earnings per hour per staked amount
 
-// const CHECKPOINT_CONFIG = {
-//   MIN_DEPOSIT: 0.1
+// // Add this helper function to calculate total stake bonus
+// const calculateStakeBonus = (stakeAmount: number) => {
+//   let bonus = 0;
+//   for (const tier of MINING_CONFIG.BONUSES.STAKE_TIERS) {
+//     if (stakeAmount >= tier.amount) {
+//       bonus = tier.bonus;
+//     } else {
+//       break;
+//     }
+//   }
+//   return 1 + bonus;
+// };
+
+// // Add this helper function before calculateRewards
+// const calculateEfficiency = (state: MiningState): number => {
+//   const baseEfficiency = state.equipment.reduce((acc, eq) => acc * eq.efficiency, 1);
+//   return Math.min(1, baseEfficiency);
 // };
 
 // export const IndexPage: FC = () => {
 //   const { user, telegramUser, isLoading, error } = useAuth();
 //   const [currentTab, setCurrentTab] = useState<'mine' | 'network' | 'gmp' | 'tasks' | 'token'>('mine');
   
-//   // Simplified state
+//   // Move ALL state declarations to the top level, before any conditional logic
 //   const [stakedAmount, setStakedAmount] = useState<number>(0);
 //   const [hdcBalance, setHdcBalance] = useState<number>(0);
 //   const [isStaking, setIsStaking] = useState<boolean>(false);
@@ -67,74 +221,543 @@
 //   const [hashrate, setHashrate] = useState<number>(0);
 //   const [hashrateUnit, setHashrateUnit] = useState<string>('H/s');
 //   const [animateBalance, setAnimateBalance] = useState(false);
+//   const [energy, setEnergy] = useState({
+//     current: 100,
+//     max: 100,
+//     lastUpdate: Date.now()
+//   });
 //   const [miningStats, setMiningStats] = useState<MiningStats>({
+//     lastMiningTime: 0,
 //     totalMined: 0,
 //     cycleEarnings: 0,
-//     checkpointsPassed: 0,
+//     referralEarnings: 0,
+//     weeklyRankingBonus: 0,
+//     consecutiveDays: 0,
+//     cycleStartTime: 0,
 //     cycleCompletion: 0,
-//     cycleStartTime: 0
+//     lastCheckpointTime: 0,
+//     checkpointsPassed: 0
 //   });
-//   const [lastDailyBonus, setLastDailyBonus] = useState<number>(Date.now());
-//   const [lastHourlyBonus, setLastHourlyBonus] = useState<number>(Date.now());
+//   const [lastDailyBonus, setLastDailyBonus] = useState<number>(0);
+//   const [lastHourlyBonus, setLastHourlyBonus] = useState<number>(0);
 //   const [showBonusModal, setShowBonusModal] = useState(false);
-//   const [bonusAmount, setBonusAmount] = useState<number>(0);
-//   const [bonusType, setBonusType] = useState<'daily' | 'hourly'>('daily');
+//   const [bonusAmount, setBonusAmount] = useState(0);
+//   const [bonusType, setBonusType] = useState<'daily' | 'hourly' | null>(null);
+//   const [miningData, setMiningData] = useState({
+//     totalMined: 0,
+//     cycleEarnings: 0,
+//     cycleStartTime: '',
+//     checkpointsPassed: 0,
+//     stakedAmount: 0,
+//     miningStats: {
+//       hashrate: 0,
+//       efficiency: 1,
+//       power: 0,
+//       lastCheckpointTime: Date.now(),
+//       checkpointsPassed: 0
+//     }
+//   });
 
-//   // Simplified helper functions
-//   const formatNumber = (num: number) => Number(num.toFixed(6)).toString();
+//   // Constants
+
+//   const DAILY_RATE = 0.03; // 3% daily
+//   const HOURLY_RATE = DAILY_RATE / 24;
   
-//   const calculateNextUpgrade = (amount: number) => 10 + (Math.floor(amount / 0.1) * 2);
+//   // Move ALL useEffect declarations here, after state declarations and before any conditional logic
+//   useEffect(() => {
+//     const savedBalance = loadBalance();
+//     setHdcBalance(savedBalance);
 
-//   const calculateStakeBonus = (amount: number): number => {
-//     return 1 + (Math.log10(amount + 1) * 0.1);
-//   };
+//     const savedMiningState = loadMiningState();
+//     if (savedMiningState) {
+//       setIsStaking(savedMiningState.isStaking);
+//       setStakedAmount(savedMiningState.stakedAmount);
+//       setMiningStats(savedMiningState.miningStats);
+//       if (savedMiningState.stakedAmount > 0) {
+//         calculateHashrate(savedMiningState.stakedAmount);
+//       }
+//     }
 
-//   // UI handlers
-//   const startMining = () => {
-//     const amount = Number(depositAmount);
-//     setStakedAmount(prev => prev + amount);
-//     setIsStaking(true);
-//     setShowDepositModal(false);
-//     setDepositAmount('');
-//   };
+//     // Load bonus times
+//     const bonusTimes = loadBonusTimes();
+//     setLastDailyBonus(bonusTimes.daily);
+//     setLastHourlyBonus(bonusTimes.hourly);
+//   }, []);
 
-//   const resetMining = () => {
-//     setStakedAmount(0);
-//     setIsStaking(false);
-//     setMiningStats({
-//       totalMined: 0,
-//       cycleEarnings: 0,
-//       checkpointsPassed: 0,
-//       cycleCompletion: 0,
-//       cycleStartTime: 0
-//     });
-//   };
+//   useEffect(() => {
+//     const interval = setInterval(() => {
+//       setLastDailyBonus(prev => prev);
+//       setLastHourlyBonus(prev => prev);
+//     }, 60000);
 
-//   const claimBonus = () => {
-//     setShowBonusModal(false);
-//     setHdcBalance(prev => prev + bonusAmount);
-//   };
+//     return () => clearInterval(interval);
+//   }, []);
 
-//   // Add this useEffect after your state declarations
+//   // Add new state for local mining data
+//   const [localMiningData, setLocalMiningData] = useState({
+//     lastMiningTime: Date.now(),
+//     pendingRewards: 0
+//   });
+
+//   // Update mining effect to be more reliable
+//   useEffect(() => {
+//     if (!isStaking || stakedAmount <= 0 || energy.current <= 0 || !user?.telegram_id) return;
+
+//     const miningInterval = setInterval(() => {
+//       try {
+//         setLocalMiningData(prevLocal => {
+//           const now = Date.now();
+//           const timeDiff = now - prevLocal.lastMiningTime;
+          
+//           const hourlyRate = MINING_CONFIG.BASE_RATE / 24;
+//           const baseReward = (stakedAmount * hourlyRate * timeDiff) / (60 * 60 * 1000);
+//           const stakeBonus = calculateStakeBonus(stakedAmount);
+//           const rewards = baseReward * stakeBonus;
+
+//           const newLocalData = {
+//             lastMiningTime: now,
+//             pendingRewards: prevLocal.pendingRewards + rewards
+//           };
+          
+//           localStorage.setItem(`mining_${user.telegram_id}`, JSON.stringify(newLocalData));
+
+//           setMiningStats(prev => ({
+//             ...prev,
+//             totalMined: prev.totalMined + rewards,
+//             cycleEarnings: prev.cycleEarnings + rewards,
+//             lastMiningTime: now,
+//             cycleCompletion: calculateCycleProgress(prev.cycleStartTime)
+//           }));
+
+//           setHdcBalance(prev => Number((prev + rewards).toFixed(6)));
+          
+//           return newLocalData;
+//         });
+//       } catch (error) {
+//         console.error('Mining update error:', error);
+//       }
+//     }, 1000);
+
+//     return () => clearInterval(miningInterval);
+//   }, [isStaking, stakedAmount, energy.current, user?.telegram_id]);
+
+//   // Update sync effect to be more reliable
+//   useEffect(() => {
+//     if (!user?.telegram_id || !isStaking) return;
+
+//     const syncInterval = setInterval(() => {
+//       const miningState = {
+//         totalMined: miningStats.totalMined,
+//         cycleEarnings: miningStats.cycleEarnings,
+//         stakedAmount,
+//         lastMiningTime: Date.now(),
+//         checkpointsPassed: miningStats.checkpointsPassed
+//       };
+      
+//       localStorage.setItem(`miningState_${user.telegram_id}`, JSON.stringify(miningState));
+//     }, 30000);
+
+//     return () => clearInterval(syncInterval);
+//   }, [user?.telegram_id, isStaking, miningStats, stakedAmount]);
+
+//   // Energy calculation effect
 //   useEffect(() => {
 //     if (!isStaking) return;
 
-//     // Update mining stats every second
 //     const interval = setInterval(() => {
-//       setMiningStats(prev => ({
-//         ...prev,
-//         cycleCompletion: Math.min((prev.cycleCompletion + 1), 100),
-//         totalMined: prev.totalMined + (stakedAmount * HOURLY_RATE / 3600)
-//       }));
+//       setEnergy(prev => {
+//         const now = Date.now();
+//         const timeDiff = now - prev.lastUpdate;
+//         const energyGain = timeDiff / (60 * 1000);
+        
+//         return {
+//           ...prev,
+//           current: Math.min(prev.max, prev.current + energyGain),
+//           lastUpdate: now
+//         };
+//       });
+//     }, 60 * 1000);
 
-//       setHdcBalance(prev => prev + (stakedAmount * HOURLY_RATE / 3600));
-      
-//       // Update hashrate
-//       setHashrate(stakedAmount * 100);
+//     return () => clearInterval(interval);
+//   }, [isStaking]);
+
+//   // Update mining rewards calculation
+//   const calculateRewards = (state: MiningState, offlineTime: number = 0) => {
+//     const efficiency = calculateEfficiency(state);
+//     let reward = state.power * MINING_CONFIG.BASE_RATE * efficiency * 10; // Added 10x multiplier
+
+//     // Equipment bonuses
+//     const equipmentMultiplier = state.equipment.reduce((acc, eq) => 
+//       acc + (eq.powerBoost * eq.level * MINING_CONFIG.BONUSES.EQUIPMENT_BOOST), 1);
+//     reward *= equipmentMultiplier;
+
+//     // Active boosters
+//     const now = Date.now();
+//     const activeBoosterMultiplier = state.boosters
+//       .filter(b => b.expiresAt > now)
+//       .reduce((acc, b) => acc * b.multiplier, 1);
+//     reward *= activeBoosterMultiplier;
+
+//     // Offline penalty if applicable
+//     if (offlineTime > 0) {
+//       const offlineMultiplier = Math.max(
+//         MINING_CONFIG.LIMITS.OFFLINE_CAP,
+//         1 - (offlineTime / MINING_CONFIG.INTERVALS.OFFLINE)
+//       );
+//       reward *= offlineMultiplier;
+//     }
+
+//     // Cap at maximum multiplier
+//     return Math.min(
+//       reward,
+//       state.power * MINING_CONFIG.BASE_RATE * MINING_CONFIG.LIMITS.MAX_MULTIPLIER
+//     );
+//   };
+
+//   // Update offline progress calculation
+//   const calculateOfflineProgress = (state: MiningState, lastOnline: number) => {
+//     const now = Date.now();
+//     const offlineTime = now - lastOnline;
+    
+//     // Cap offline time to 7 days max
+//     const maxOfflineTime = 7 * 24 * 60 * 60 * 1000;
+//     const effectiveOfflineTime = Math.min(offlineTime, maxOfflineTime);
+
+//     // Calculate base rewards
+//     let rewards = calculateRewards(state, effectiveOfflineTime);
+
+//     // Apply decay after 24 hours
+//     if (effectiveOfflineTime > 24 * 60 * 60 * 1000) {
+//       const decayFactor = Math.pow(0.95, Math.floor((effectiveOfflineTime - 24 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000)));
+//       rewards *= decayFactor;
+//     }
+
+//     return {
+//       rewards: Number(rewards.toFixed(6)),
+//       duration: effectiveOfflineTime
+//     };
+//   };
+
+//   // Update distributeEarnings function
+//   const distributeEarnings = async (amount: number) => {
+//     if (!user?.telegram_id || !miningData) return;
+
+//     const userShare = amount * BASIC_MINING_CONFIG.USER_SHARE;
+//     const newBalance = hdcBalance + userShare;
+    
+//     // Verify and update server first
+//     const updatedData = {
+//       totalMined: newBalance,
+//       cycleEarnings: miningData.cycleEarnings + userShare,
+//       lastMiningTime: new Date().toISOString()
+//     };
+
+//     localStorage.setItem(`miningState_${user.telegram_id}`, JSON.stringify(updatedData));
+//     setMiningData({ ...miningData, ...updatedData });
+    
+//     setAnimateBalance(true);
+//     setTimeout(() => setAnimateBalance(false), 200);
+//   };
+
+//   // Function to calculate hashrate based on stake
+//   const calculateHashrate = (stake: number) => {
+//     // Base hashrate: 1 TON = 100 H/s
+//     const baseHashrate = stake * 100;
+    
+//     // Convert to appropriate unit with proper precision
+//     if (baseHashrate >= 1000000) {
+//       setHashrateUnit('MH/s');
+//       setHashrate(Number((baseHashrate / 1000000).toFixed(3)));
+//     } else if (baseHashrate >= 1000) {
+//       setHashrateUnit('KH/s');
+//       setHashrate(Number((baseHashrate / 1000).toFixed(2)));
+//     } else {
+//       setHashrateUnit('H/s');
+//       setHashrate(Number(baseHashrate.toFixed(1)));
+//     }
+//   };
+
+//   // Update startMining function
+//   const startMining = () => {
+//     if (!user?.telegram_id) return;
+
+//     const amount = Number(depositAmount);
+//     if (amount < CHECKPOINT_CONFIG.MIN_DEPOSIT) {
+//       alert(`Minimum deposit required is ${CHECKPOINT_CONFIG.MIN_DEPOSIT} TON`);
+//       return;
+//     }
+
+//     const now = Date.now();
+//     const isCheckpointDeposit = miningStats.cycleStartTime > 0 && isStaking;
+
+//     const updatedStats = isCheckpointDeposit ? {
+//       ...miningStats,
+//       stakedAmount: Number((stakedAmount + amount).toFixed(6)),
+//       checkpointsPassed: miningStats.checkpointsPassed + 1,
+//       lastCheckpointTime: now
+//     } : {
+//       ...miningStats,
+//       stakedAmount: amount,
+//       cycleStartTime: now,
+//       cycleEarnings: 0,
+//       checkpointsPassed: 0,
+//       lastCheckpointTime: now
+//     };
+
+//     setMiningStats(updatedStats);
+//     setStakedAmount(updatedStats.stakedAmount);
+//     setIsStaking(true);
+//     setShowDepositModal(false);
+//     setDepositAmount('');
+//     calculateHashrate(updatedStats.stakedAmount);
+
+//     // Save to localStorage
+//     localStorage.setItem(`miningState_${user.telegram_id}`, JSON.stringify(updatedStats));
+//   };
+
+//   // Add new useEffect for offline mining
+//   useEffect(() => {
+//     if (!isStaking) return;
+
+//     const handleVisibilityChange = () => {
+//       if (document.visibilityState === 'visible') {
+//         const offlineProgress = calculateOfflineProgress(
+//           {
+//             power: stakedAmount,
+//             efficiency: 1,
+//             lastUpdate: miningStats.lastMiningTime,
+//             consecutiveDays: miningStats.consecutiveDays,
+//             equipment: [],
+//             boosters: []
+//           },
+//           miningStats.lastMiningTime
+//         );
+        
+//         if (offlineProgress.rewards > 0) {
+//           setMiningStats(prev => ({
+//             ...prev,
+//             totalMined: Number((prev.totalMined + offlineProgress.rewards).toFixed(6)),
+//             cycleEarnings: Number((prev.cycleEarnings + offlineProgress.rewards).toFixed(6)),
+//             lastMiningTime: Date.now()
+//           }));
+//           distributeEarnings(offlineProgress.rewards);
+//         }
+//       }
+//     };
+
+//     document.addEventListener('visibilitychange', handleVisibilityChange);
+//     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+//   }, [isStaking, stakedAmount, miningStats]);
+
+//   // Add anti-cheat measures
+//   useEffect(() => {
+//     if (!isStaking) return;
+
+//     const lastMiningTime = localStorage.getItem('lastMiningTime');
+//     if (lastMiningTime && Date.now() - Number(lastMiningTime) < 0) {
+//       // Time manipulation detected
+//       setIsStaking(false);
+//       alert('Invalid system time detected. Mining stopped.');
+//       return;
+//     }
+
+//     const interval = setInterval(() => {
+//       localStorage.setItem('lastMiningTime', Date.now().toString());
 //     }, 1000);
 
 //     return () => clearInterval(interval);
-//   }, [isStaking, stakedAmount]);
+//   }, [isStaking]);
+
+//   // Extreme Mining Speed Calculation:
+//   // For 1 TON staked:
+//   // - Base Rate: 5.0 (500% daily)
+//   // - Interval: 10ms
+//   // - User Share: 99% (0.99)
+//   // - 10x Multiplier
+
+//   // Per Day:
+//   // ≈ 0.0007 HDC/day
+
+//   // Add cleanup when cycle completes
+//   const handleCycleComplete = async () => {
+//     if (!user?.telegram_id) return;
+
+//     try {
+//       // Reset mining cycle in Supabase
+//       const updatedData = {
+//         totalMined: 0,
+//         cycleEarnings: 0,
+//         cycleStartTime: '',
+//         checkpointsPassed: 0,
+//         stakedAmount: 0,
+//         miningStats: {
+//           hashrate: 0,
+//           efficiency: 1,
+//           power: 0,
+//           lastCheckpointTime: Date.now(),
+//           checkpointsPassed: 0
+//         }
+//       };
+
+//       localStorage.setItem(`miningState_${user.telegram_id}`, JSON.stringify(updatedData));
+//       setMiningData(updatedData);
+//       setIsStaking(false);
+//       setStakedAmount(0);
+//       alert('Mining cycle completed! The 30-day period has ended.');
+//     } catch (error) {
+//       console.error('Error completing cycle:', error);
+//     }
+//   };
+
+//   // Add localStorage for persistent balance
+//   const loadBalance = () => {
+//     const savedBalance = localStorage.getItem('hdcBalance');
+//     return savedBalance ? Number(savedBalance) : 0;
+//   };
+
+//   const saveBalance = (balance: number) => {
+//     localStorage.setItem('hdcBalance', balance.toString());
+//   };
+
+//   // Update the bonus claim function
+//   const claimBonus = () => {
+//     const now = Date.now();
+    
+//     if (bonusType === 'daily') {
+//       setLastDailyBonus(now);
+//       localStorage.setItem('lastDailyBonus', now.toString());
+//     } else if (bonusType === 'hourly') {
+//       setLastHourlyBonus(now);
+//       localStorage.setItem('lastHourlyBonus', now.toString());
+//     }
+
+//     setHdcBalance(prev => {
+//       const newBalance = prev + bonusAmount;
+//       saveBalance(newBalance);
+//       return newBalance;
+//     });
+    
+//     setShowBonusModal(false);
+//     setAnimateBalance(true);
+//     setTimeout(() => setAnimateBalance(false), 200);
+//   };
+
+//   // Update the bonus check useEffect
+//   useEffect(() => {
+//     const checkLoginBonuses = () => {
+//       const now = Date.now();
+      
+//       // Check daily bonus
+//       if (now - lastDailyBonus >= LOGIN_BONUS.DAILY.INTERVAL) {
+//         setBonusAmount(LOGIN_BONUS.DAILY.AMOUNT);
+//         setBonusType('daily');
+//         setShowBonusModal(true);
+//       }
+//       // Check hourly bonus only if daily bonus modal is not showing
+//       else if (now - lastHourlyBonus >= LOGIN_BONUS.HOURLY.INTERVAL && !showBonusModal) {
+//         setBonusAmount(LOGIN_BONUS.HOURLY.AMOUNT);
+//         setBonusType('hourly');
+//         setShowBonusModal(true);
+//       }
+//     };
+
+//     // Check bonuses immediately and set up interval
+//     checkLoginBonuses();
+    
+//     const interval = setInterval(() => {
+//       checkLoginBonuses();
+//     }, 60000); // Check every minute
+
+//     return () => clearInterval(interval);
+//   }, [lastDailyBonus, lastHourlyBonus, showBonusModal]);
+
+//   // Add this effect to load mining data
+//   const loadMiningData = () => {
+//     if (!user?.telegram_id) return;
+
+//     const savedData = localStorage.getItem(`miningState_${user.telegram_id}`);
+//     let data = savedData ? JSON.parse(savedData) : {
+//       totalMined: 0,
+//       cycleEarnings: 0,
+//       cycleStartTime: Date.now(),
+//       checkpointsPassed: 0,
+//       stakedAmount: 0,
+//       miningStats: {
+//         hashrate: 0,
+//         efficiency: 1,
+//         power: 0,
+//         lastCheckpointTime: Date.now(),
+//         checkpointsPassed: 0
+//       }
+//     };
+
+//     setMiningData(data);
+//   };
+
+//   // Add mining verification
+//   useEffect(() => {
+//     if (!user?.telegram_id) return;
+
+//     // Get local data for verification
+//     const savedData = localStorage.getItem(`miningState_${user.telegram_id}`);
+//     if (!savedData) return;
+    
+//     const localData = JSON.parse(savedData);
+//     if (localData.totalMined !== miningData.totalMined) {
+//       console.error('Mining state mismatch detected');
+//       setMiningData(localData);
+//       setHdcBalance(localData.totalMined);
+//     }
+//   }, [isStaking, user?.telegram_id, miningData]);
+
+//   // Add reset function
+//   const resetMining = async () => {
+//     if (!user?.telegram_id) return;
+
+//     try {
+//       // Show confirmation dialog
+//       const confirmed = window.confirm(
+//         'Are you sure you want to reset mining? This will reset your current cycle progress and staked amount.'
+//       );
+
+//       if (!confirmed) return;
+
+//       // Reset Supabase mining data
+//       const updatedData = {
+//         totalMined: 0,
+//         cycleEarnings: 0,
+//         cycleStartTime: '',
+//         checkpointsPassed: 0,
+//         stakedAmount: 0,
+//         miningStats: {
+//           hashrate: 0,
+//           efficiency: 1,
+//           power: 0,
+//           lastCheckpointTime: Date.now(),
+//           checkpointsPassed: 0
+//         }
+//       };
+
+//       localStorage.setItem(`miningState_${user.telegram_id}`, JSON.stringify(updatedData));
+//       setMiningData(updatedData);
+//       setStakedAmount(0);
+//       setIsStaking(false);
+//       setHashrate(0);
+//       setMiningStats(prev => ({
+//         ...prev,
+//         cycleEarnings: 0,
+//         cycleCompletion: 0,
+//         checkpointsPassed: 0,
+//         lastCheckpointTime: Date.now()
+//       }));
+
+//       // Show success message
+//       alert('Mining has been reset successfully!');
+//     } catch (error) {
+//       console.error('Error resetting mining:', error);
+//       alert('Failed to reset mining. Please try again.');
+//     }
+//   };
 
 //   // Show loading state
 //   if (isLoading) {
@@ -290,7 +913,7 @@
 //                   <div className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-200 ${
 //                     animateBalance ? 'scale-110 text-green-400' : ''
 //                   }`}>
-//                     <span className="font-mono">{hdcBalance.toFixed(6)}</span>
+//                     <span className="font-mono">{hdcBalance.toFixed(3)}</span>
 //                     <div className="text-xs sm:text-sm text-gray-400 mt-1">
 //                       +{(stakedAmount * HOURLY_RATE * 0.7).toFixed(3)}/hr
 //                     </div>
@@ -754,4 +1377,13 @@
 //   return `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m`;
 // };
 
-// const calculateNextUpgrade = (amount: number) => 10 + (Math.floor(amount / 0.1) * 2);
+// const calculateNextUpgrade = (stakedAmount: number) => {
+//   const baseIncrease = 10;
+//   const level = Math.floor(stakedAmount / CHECKPOINT_CONFIG.MIN_DEPOSIT);
+//   return baseIncrease + (level * 2);
+// };
+
+
+// const formatNumber = (num: number) => {
+//   return Number(num.toFixed(6)).toString();
+// };
