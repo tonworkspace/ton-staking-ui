@@ -1,34 +1,52 @@
+import '../buffer-polyfill';
+
+import { SDKProvider, useLaunchParams } from '@telegram-apps/sdk-react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { type FC, useEffect, useMemo } from 'react';
+
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
-import { publicUrl } from '@/helpers/publicUrl.ts';
 
-function ErrorBoundaryError({ error }: { error: unknown }) {
-  return (
-    <div>
-      <p>An unhandled error occurred:</p>
-      <blockquote>
-        <code>
-          {error instanceof Error
-            ? error.message
-            : typeof error === 'string'
-              ? error
-              : JSON.stringify(error)}
-        </code>
-      </blockquote>
-    </div>
-  );
-}
+const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
+  <div>
+    <p>An unhandled error occurred:</p>
+    <blockquote>
+      <code>
+        {error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : JSON.stringify(error)}
+      </code>
+    </blockquote>
+  </div>
+);
 
-export function Root() {
+const Inner: FC = () => {
+  const debug = useLaunchParams().startParam === 'debug';
+  const manifestUrl = useMemo(() => {
+    return new URL('https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json', window.location.href).toString();
+  }, []);
+
+  // Enable debug mode to see all the methods sent and events received.
+  useEffect(() => {
+    if (debug) {
+      import('eruda').then((lib) => lib.default.init());
+    }
+  }, [debug]);
+
   return (
-    <ErrorBoundary fallback={ErrorBoundaryError}>
-      <TonConnectUIProvider
-        manifestUrl={publicUrl('tonconnect-manifest.json')}
-      >
+    <TonConnectUIProvider manifestUrl={manifestUrl}>
+      <SDKProvider acceptCustomStyles debug={debug}>
         <App/>
-      </TonConnectUIProvider>
-    </ErrorBoundary>
+      </SDKProvider>
+    </TonConnectUIProvider>
   );
-}
+};
+
+export const Root: FC = () => (
+  <ErrorBoundary fallback={ErrorBoundaryError}>
+    <Inner/>
+  </ErrorBoundary>
+);
